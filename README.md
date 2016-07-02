@@ -1,3 +1,3 @@
 # TwentyFortyEight
-Java recreation of Twenty Forty Eight game
+My Java recreation of Twenty Forty Eight game
 
