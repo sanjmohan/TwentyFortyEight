@@ -1,4 +1,5 @@
-// Sanjay
+// File for handling tile movement
+
 package sam.game;
 
 import java.awt.Color;
@@ -30,16 +31,18 @@ import javax.swing.*;
  *  
  *  For Revision:
  *  	JAVA ENUM
- *  	comments
- *  	clean
- *  	fix imports
  *  	APPLET!
  *  	change all pieces coords to inverses and change g.drawSquarePiece() accordingly
  */
 
+/**
+ * Contains SquarePieces and handles movement, user inputs, game functionality
+ */
 public class Gameboard extends JPanel implements ActionListener
 {
-	private SquarePiece[][] pieces;		// "real" spots at even indices (0, 2, 4...)
+	// "real" spots at even indices (0, 2, 4...)
+	// odd spots are transitional locations (for animation)
+	private SquarePiece[][] pieces;
 	private int score;
 	private boolean gameOver;
 	private int updates;
@@ -47,6 +50,9 @@ public class Gameboard extends JPanel implements ActionListener
 	private boolean currentlyMoving;
 	protected ArrayList<Integer> moveList;	// queue of moves; first moves at index 0
 	
+	/**
+	 * Construct a new Gameboard, define user input commands
+	 */
 	protected Gameboard()
 	{
 		super();
@@ -68,6 +74,10 @@ public class Gameboard extends JPanel implements ActionListener
 		makeNewPiece();
 	}
 	
+	/**
+	 * Add keyboard input to Gameboard's input and action maps
+	 * @param key Name of key to be added
+	 */
 	private void addKey(String key)
 	{
 		final String tag = new String(key);		// final in order to use anonymous class
@@ -89,6 +99,10 @@ public class Gameboard extends JPanel implements ActionListener
 		});		
 	}
 	
+	/**
+	 * Paint grid lines and SquarePieces
+	 * @param g Graphics object of Gameboard
+	 */
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -123,9 +137,12 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
+	/**
+	 * Randomly generate a new SquarePiece on board
+	 */
 	private void makeNewPiece()
 	{
-		int val = Math.random() < 0.9 ? 2 : 4;				// (boolean statement) ? (true result) : (false result);
+		int val = Math.random() < 0.9 ? 2 : 4;
 		SquarePiece sq = new SquarePiece(val);
 		ArrayList<Point> empties = new ArrayList<Point>();
 		for (int i = 0; i < pieces.length; i+=2)			// += 2 to only get "real" spots
@@ -142,11 +159,19 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
+	/**
+	 * Return current game score
+	 * @return score as integer
+	 */
 	protected int getScore()
 	{
 		return score;
 	}
 	
+	/**
+	 * Checks if there are no possible moves left
+	 * @return true if there are no possible moves, else false
+	 */
 	protected boolean checkGameOver()
 	{
 		for (int i = 0; i < pieces.length; i += 2)
@@ -168,17 +193,21 @@ public class Gameboard extends JPanel implements ActionListener
 		return true;
 	}
 	
-	// used by timer in move()
+	/**
+	 * Repaints and updates Gameboard. After enough updates for a piece to move across board, reset movement.
+	 * (Used by timer on move() method)
+	 * @param e ActionEvent representing this action
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		repaint();
 		updates++;
-		if (updates >= (336 / SquarePiece.DX))		// if repainted enough times to move a piece across the board, then reset
+		if (updates >= (336 / SquarePiece.DX))	// if repainted enough times to move a piece across the board, then reset
 		{
 			updates = 0;
 			t.stop();
-			combine(moveList.remove(0));				// combine pieces that should be combined and remove current move from queue
+			combine(moveList.remove(0));	// combine pieces that should be combined and remove current move from queue
 			for (int i = 0; i <  pieces.length; i++)	// make all of the pieces not New
 			{
 				for (int j = 0; j < pieces[i].length; j++)
@@ -192,11 +221,14 @@ public class Gameboard extends JPanel implements ActionListener
 			makeNewPiece();
 			repaint();
 			gameOver = checkGameOver();		// check gameOver
-			move();							// go to next move in moveList, if any
+			move();			// go to next move in moveList, if any
 		}
 	}
 	
-	// any piece in an odd row or odd column is ready to be combined
+	/**
+	 * "Combine" SquarePieces in direction of piece movement.
+	 * @param direction Current movement direction (0: up, 1: right, 2: down, 3: left)
+	 */
 	private void combine(int direction)
 	{
 		if (direction == 0)
@@ -209,6 +241,9 @@ public class Gameboard extends JPanel implements ActionListener
 			combineLeft();
 	}
 	
+	/**
+	 * Combine pieces of like number in adjacent rows in upward direction.
+	 */
 	private void combineUp()
 	{
 		for (int i = 0; i < pieces.length - 1; i+=2)	// even row, odd column	(remember, pieces coords are inverses of screen coords)
@@ -226,6 +261,9 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
+	/**
+	 * Combine pieces of like number in adjacent rows in right direction.
+	 */
 	private void combineRight()
 	{
 		for (int i = 1; i < pieces.length - 2; i+=2)	// odd row, even column
@@ -243,6 +281,9 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
+	/**
+	 * Combine pieces of like number in adjacent rows in downward direction.
+	 */
 	private void combineDown()
 	{
 		for (int i = 0; i < pieces.length - 1; i+=2)	// odd row, even column
@@ -260,6 +301,9 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
+	/**
+	 * Combine pieces of like number in adjacent rows in left direction.
+	 */
 	private void combineLeft()
 	{
 		for (int i = 1; i < pieces.length - 2; i+=2)	// even row, odd column
@@ -277,14 +321,19 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
-	
+	/**
+	 * Queue up move to be executed.
+	 * @param direction Direction of movement
+	 */
 	protected void addMove(int direction)
 	{
 		moveList.add(new Integer(direction));
 		move();
 	}
 	
-	// makes move, starts animation
+	/**
+	 * Execute movement and animation in direction of first move in queue
+	 */
 	private void move()
 	{
 		boolean movedThisTurn = false;
@@ -302,7 +351,7 @@ public class Gameboard extends JPanel implements ActionListener
 		if (movedThisTurn)
 		{
 			currentlyMoving = true;
-			t.setDelay(2);			// just so i dont have to look up at constructorso change delay
+			t.setDelay(2);
 			t.start();
 		}
 		else						// if no squares shifted, remove the current move from queue and checks for more moves
@@ -312,7 +361,10 @@ public class Gameboard extends JPanel implements ActionListener
 		}
 	}
 	
-	// returns true if any pieces moved, else false
+	/**
+	 * Moves pieces up.
+	 * @return true if any pieces move, else false.
+	 */
 	private boolean moveUp()
 	{
 		System.out.println("up!");
@@ -347,7 +399,10 @@ public class Gameboard extends JPanel implements ActionListener
 		return moved;
 	}
 
-	// returns true if any pieces moved, else false
+	/**
+	 * Moves pieces down
+	 * @return true if any pieces move, else false
+	 */
 	private boolean moveDown()
 	{
 		System.out.println("down!");
@@ -380,7 +435,10 @@ public class Gameboard extends JPanel implements ActionListener
 		return moved;
 	}
 	
-	// returns true if any pieces moved, else false
+	/**
+	 * Moves pieces left
+	 * @return true if any pieces move, else false
+	 */
 	private boolean moveLeft()
 	{
 		System.out.println("left!");
@@ -413,7 +471,10 @@ public class Gameboard extends JPanel implements ActionListener
 		return moved;
 	}
 	
-	// returns true if any pieces moved, else false
+	/**
+	 * Moves pieces right
+	 * @return true if any pieces move, else false
+	 */
 	private boolean moveRight()
 	{
 		System.out.println("right!");
@@ -446,7 +507,9 @@ public class Gameboard extends JPanel implements ActionListener
 		return moved;
 	}
 	
-	// ends timer, makes new pieces matrix, resets score and moveList, creates starting piece
+	/**
+	 * Ends timer, makes new pieces matrix, resets score and moveList, creates starting piece
+	 */
 	protected void makeNewGame()
 	{
 		t.stop();
