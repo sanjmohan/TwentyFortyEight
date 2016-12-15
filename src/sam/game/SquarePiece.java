@@ -1,10 +1,14 @@
-// Sanjay
+// File representing game piece tiles
+
 package sam.game;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+/**
+ * Class representing square Twenty Forty Eight game tiles
+ */
 public class SquarePiece
 {
 	private int value;
@@ -14,7 +18,11 @@ public class SquarePiece
 	private int y;				// current y
 	public static final int DX = 7;		// should be factor of 56
 	public static final int DY = 7;
-	
+
+	/**
+	 * Construct a SquarePiece with default coords (0, 0)
+	 * @param val value of this tile
+	 */
 	protected SquarePiece(int val)
 	{
 		value = val;
@@ -25,6 +33,12 @@ public class SquarePiece
 		y = 0;
 	}
 	
+	/**
+	 * Construct a SquarePiece
+	 * @param val value of this tile
+	 * @param x2 x coord of tile
+	 * @param y2 y coord of tile
+	 */
 	protected SquarePiece(int val, int x2, int y2)
 	{
 		value = val;
@@ -35,27 +49,50 @@ public class SquarePiece
 		y = y2;
 	}
 	
+	/**
+	 * Set coordinates to given values
+	 * @param x2 x coord to set
+	 * @param y2 y coord to set
+	 */
 	protected void setCoords(int x2, int y2)
 	{
 		x = x2;
 		y = y2;
 	}
 	
+	/**
+	 * Get value of tile
+	 * @return value of tile as integer
+	 */
 	protected int getValue()
 	{
 		return value;
 	}
 	
+	/**
+	 * Return "new" state of tile
+	 * @return value of isNewTile
+	 */
 	protected boolean isNew()
 	{
 		return isNewTile;
 	}
 	
+	/**
+	 * Set "new" attribute
+	 * @param isNew value to set isNewTile to
+	 */
 	protected void setNew(boolean isNew)
 	{
 		isNewTile = isNew;
 	}
 
+	/**
+	 * Paint this tile
+	 * @param g Graphics2D object with which to draw this tile
+	 * @param x2 x coord in window to draw this tile at
+	 * @param y2 y coord in window to draw this tile at
+	 */
 	protected void drawSquarePiece(Graphics2D g, int x2, int y2)
 	{
 		Color c = g.getColor();
@@ -77,6 +114,9 @@ public class SquarePiece
 		g.setColor(c);
 	}
 	
+	/**
+	 * Return color of this tile based on current value of tile
+	 */
 	private Color getColor()
 	{
 		if (value == 2)
