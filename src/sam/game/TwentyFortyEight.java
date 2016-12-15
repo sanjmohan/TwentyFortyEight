@@ -1,3 +1,5 @@
+// GUI for Twenty Forty Eight game
+
 package sam.game;
 
 import java.awt.BorderLayout;
@@ -10,8 +12,15 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * GUI for game
+ */
 public class TwentyFortyEight
 {
+	/**
+	 * Initializes GUI
+	 * @param args Command line arguments (not used here)
+	 */
 	public static void main(String[] args)
 	{
 		SwingUtilities.invokeLater(new Runnable()
@@ -24,7 +33,10 @@ public class TwentyFortyEight
 		});
 	}
 	
-	protected static void init()
+	/**
+	 * Initialize/construct GUI components
+	 */
+	private static void init()
 	{
 		/* board needs focus for arrow key inputs to work, so other components must not be focusable */
 		
@@ -50,12 +62,12 @@ public class TwentyFortyEight
 		txt.setFont(new Font("TimesRoman", Font.PLAIN, 50));
 		
 		JLabel v2 = new JLabel("V. 2.0");
-		v2.setBorder(new EmptyBorder(0, 200, 0, 0));				// padding
+		v2.setBorder(new EmptyBorder(0, 200, 0, 0)); 	// padding
 		v2.setFocusable(false);
 		
-		final JLabel score = new JLabel() {						// final because something about anonymous classes inside a method
+		final JLabel score = new JLabel() {
 			@Override
-			public void paintComponent(Graphics g)				// every repaint(), calls board.getScore()
+			public void paintComponent(Graphics g) 		// every repaint(), calls board.getScore()
 			{
 				super.paintComponent(g);
 				g.setColor(Color.BLACK);
